@@ -1,0 +1,267 @@
+definitions:
+  add.Request:
+    properties:
+      group_name:
+        type: string
+      song_name:
+        type: string
+    required:
+    - group_name
+    - song_name
+    type: object
+  add.Response:
+    properties:
+      error:
+        type: string
+      id:
+        type: integer
+      status:
+        description: Error, Ok
+        type: string
+    type: object
+  get.Response:
+    properties:
+      error:
+        type: string
+      songs:
+        items:
+          $ref: '#/definitions/models.SongDTO'
+        type: array
+      status:
+        description: Error, Ok
+        type: string
+    type: object
+  models.SongDTO:
+    properties:
+      groupName:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      releaseDate:
+        type: string
+      songName:
+        type: string
+      text:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      error:
+        type: string
+      status:
+        description: Error, Ok
+        type: string
+    type: object
+  update.Request:
+    properties:
+      group_name:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      release_date:
+        type: string
+      song_name:
+        type: string
+      text:
+        type: string
+    required:
+    - id
+    type: object
+  verses.Response:
+    properties:
+      error:
+        type: string
+      status:
+        description: Error, Ok
+        type: string
+      verses:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /songs:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve songs with pagination and filtering options.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of results per page
+        in: query
+        name: limit
+        type: integer
+      - description: Song ID
+        in: query
+        name: id
+        type: integer
+      - description: Release date
+        in: query
+        name: release_date
+        type: string
+      - description: Group name
+        in: query
+        name: group_name
+        type: string
+      - description: Song name
+        in: query
+        name: song_name
+        type: string
+      - description: Song text
+        in: query
+        name: song_text
+        type: string
+      - description: Song link
+        in: query
+        name: link
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/get.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get songs
+      tags:
+      - songs
+    post:
+      consumes:
+      - application/json
+      description: Add a new song by group name and song name.
+      parameters:
+      - description: Song details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/add.Request'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successful add new song
+          schema:
+            $ref: '#/definitions/add.Response'
+        "400":
+          description: Bad request error response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal server error response
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add a new song
+      tags:
+      - songs
+    put:
+      consumes:
+      - application/json
+      description: Update a song's details by its ID.
+      parameters:
+      - description: Updated song details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/update.Request'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update a song
+      tags:
+      - songs
+  /songs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a song by its ID.
+      parameters:
+      - description: Song ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Remove a song
+      tags:
+      - songs
+  /verses:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve verses of a song by its ID with optional pagination.
+      parameters:
+      - description: Song ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      - default: 1
+        description: Verse number
+        in: query
+        name: verse
+        type: integer
+      - default: 1
+        description: Number of verses to retrieve
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/verses.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get song verses
+      tags:
+      - songs
+swagger: "2.0"

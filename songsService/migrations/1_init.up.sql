@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS songs
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    group_name VARCHAR(255) NOT NULL,
+    song_name VARCHAR(255) NOT NULL,
+    release_date DATE NOT NULL,
+    song_text TEXT NOT NULL,
+    link TEXT NOT NULL
+);

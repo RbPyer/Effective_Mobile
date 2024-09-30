@@ -1,0 +1,4 @@
+env: "dev" # dev, prod
+host: "0.0.0.0:8080"
+timeout: 5s # time for request handling
+idle_timeout: 60s  # life-time of client-server connection

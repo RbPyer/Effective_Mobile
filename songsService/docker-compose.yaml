@@ -1,0 +1,53 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: my_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgres:
+    image: postgres:latest
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: oswyndel
+      POSTGRES_PASSWORD: my_password
+      POSTGRES_DB: rest
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oswyndel"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  go_songs_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go_songs_service
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      CONFIG_PATH: /app/config/.env
+    command:
+      ["sh", "-c", "/app/bin/migrator --storage-path=postgres://oswyndel:my_password@postgres:5432/rest
+       --migrations-path=/app/migrations && /app/bin/app"]
+
+volumes:
+  redis_data:
+  postgres_data:

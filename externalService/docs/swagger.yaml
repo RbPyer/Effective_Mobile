@@ -1,0 +1,46 @@
+definitions:
+  info.Response:
+    properties:
+      error:
+        type: string
+      link:
+        type: string
+      release_date:
+        type: string
+      text:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /info:
+    get:
+      consumes:
+      - application/json
+      description: Get information about a song based on group name and song name.
+      parameters:
+      - description: Name of the music group
+        in: query
+        name: group_name
+        required: true
+        type: string
+      - description: Name of the song
+        in: query
+        name: song_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with song info
+          schema:
+            $ref: '#/definitions/info.Response'
+        "400":
+          description: Bad request error response
+          schema:
+            $ref: '#/definitions/info.Response'
+      summary: Get song info
+      tags:
+      - info
+swagger: "2.0"
